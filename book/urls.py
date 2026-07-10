@@ -1,13 +1,14 @@
 from django.urls import path,include
-from .views import BookViewSet,BookAPIView
+from .views import BookViewSet,BookAPIView,UserViewSet,PermissionDemoViewSet
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 
 router.register(r"books",BookViewSet)
-
+router.register(r'auth',UserViewSet, basename='auth')
+router.register(r"demo",PermissionDemoViewSet,basename='demo')
 urlpatterns = [
- path('',include(router.urls)),
+ path('',include(router.urls)), # http://127.0.0.1:0000/api/
  path('books-api/',BookAPIView.as_view())
 ]
 
@@ -19,4 +20,14 @@ urlpatterns = [
 #http://127.0.0.1:0000/api/books/1/   DELETE  =   Book with id 1 is removed
 
 
+#http://127.0.0.1:0000/api/books-api      POST    =   Book is added to Book table
+#http://127.0.0.1:0000/api/books-api      GET     =   All books from Book table is retreived
 
+# http://127.0.0.1:0000/api/auth/register/    POST
+# http://127.0.0.1:0000/api/auth/login/       POST
+# http://127.0.0.1:0000/api/auth/me/          GET , POST
+# http://127.0.0.1:0000/api/auth/logout/      POST
+
+
+
+# http://127.0.0.1:0000/api/demo/open_route/      GET
