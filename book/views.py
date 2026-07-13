@@ -1,13 +1,14 @@
 from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet, ViewSet
-from .models import Book
-from .serializers import BookSerializer, UserRegistrationSerializer, LoginSerializer
+from .models import Book, Task
+from .serializers import BookSerializer, UserRegistrationSerializer, LoginSerializer, TaskSerilizer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated,AllowAny,IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework_simplejwt.tokens import RefreshToken
+from .permissions import IsOwnerOrReadOnly, IsAdminOrOwner
 
 def generate_token(user):
     refresh = RefreshToken.for_user(user)  # refresh, access
@@ -100,3 +101,16 @@ class PermissionDemoViewSet(ViewSet):
         return Response({
             "message":"This is an end point open only for admin user..."
         })
+    
+class TaskViewSet(ModelViewSet):
+    queryset = Task.objects.all()
+    serializer_class = TaskSerilizer
+    permission_classes = [IsAuthenticated,IsOwnerOrReadOnly]
+    
+    def perform_create(self, serializer):
+        serializer.save(owner = self.request.user)
+        
+    def get_permissions(self):
+        if self.action == "destroy":
+            return [IsAuthenticated(),IsAdminOrOwner()]
+        return super().get_permissions()
