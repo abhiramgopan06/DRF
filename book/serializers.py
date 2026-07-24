@@ -38,6 +38,5 @@ class LoginSerializer(serializers.Serializer):
 class TaskSerilizer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ' all '
-        read_only_fields = ['owner' ]
-        
+        fields = '__all__'
+        read_only_fields = ['owner']
